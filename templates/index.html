@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Voting System</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <h1>Anonymous Voting System</h1>
+    <img src="/video_feed" id="video_feed" alt="Video Feed" width="640" height="480">
+    <button onclick="startVoting()">Start Voting</button>
+    <button onclick="stopVoting()">Stop Voting</button>
+    <div id="results"></div>
+    <script>
+        function startVoting() {
+            fetch('/start_voting', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'started') {
+                        updateResults();
+                    }
+                });
+        }
+
+        function stopVoting() {
+            fetch('/stop_voting', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'stopped') {
+                        updateResults();
+                    }
+                });
+        }
+
+        function updateResults() {
+            fetch('/results')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+                    for (const [key, value] of Object.entries(data)) {
+                        html += `Option ${key}: ${value} votes<br>`;
+                    }
+                    document.getElementById('results').innerHTML = html;
+                });
+        }
+    </script>
+</body>
+</html>
+    
